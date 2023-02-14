@@ -1,0 +1,12 @@
+Upload your results in x8 folder. The names of the folders should be the same.
+Evaluation folder should be in a single zip file
+
+Zip Sctructure
+->evaluation
+-->x8
+--->ev1_001....
+--->ev1_002....
+--->...
+
+Note: DO NOT create a father folder that contains a main folder, and dont include this instruction file.
+Also check that the order of your resulting image are the same from the given inputs.
