@@ -92,8 +92,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         if max_ssim <= valid_logs['ssim']:
             max_ssim = valid_logs['ssim']
             max_psnr = valid_logs['psnr']
-            wandb.config.max_ssim = max_ssim
-            wandb.config.max_psnr = max_psnr
+            wandb.config.update({'max_ssim':max_ssim, 'max_psnr':max_psnr}, allow_val_change=True)
             torch.save(model.state_dict(), './best_model.pth')
             print('Model saved!')
             counter = 0
