@@ -104,3 +104,4 @@ def train_model(configs):
          configs['tar_dir'], configs['th_dir'], configs['hr_val_dir'],
          configs['tar_val_dir'], configs['th_val_dir'], configs['encoder'],
          configs['encoder_weights'], configs['device'], configs['lr'])
+         

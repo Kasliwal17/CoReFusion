@@ -67,3 +67,4 @@ class custom_loss(base.Loss):
 #         return x
 #         return x+y/10+z/100
         return x+p/10+z/100+y/10
+        
