@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import os
 
 # normalizing target image to be compatible with tanh activation function
 def normalize_data(data):
@@ -23,3 +24,12 @@ def visualize(**images):
         plt.title(' '.join(name.split('_')).title())
         plt.imshow(image)
     plt.show()
+
+def list_img(dir1):
+    lst = []
+    for root, dirs, files in os.walk(dir1):
+        lst.extend(files)
+    lst = sorted(lst)
+    for x in range(len(lst)):
+        lst[x]= dir1+ '/'+ lst[x]
+    return lst
