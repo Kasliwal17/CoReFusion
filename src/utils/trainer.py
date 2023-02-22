@@ -11,6 +11,7 @@ import torch
 from torch.utils.data import DataLoader
 def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4 ):
 
+    !wandb login dbc3746e4e6ed1e0934da4f8ce26351fb6ba0b00 # login to wandb
     wandb.init(project="ThermalSuperResolutionN", entity="kasliwal17",
                config={'model':'resnet34 d5','fusion_technique':'img 2 encoders decoder-attention avg tanh x+p/10+z/100+y/10 saving:ssim',
                 'lr':lr, 'max_ssim':0, 'max_psnr':0})
