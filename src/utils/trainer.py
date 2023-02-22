@@ -9,10 +9,10 @@ from torchmetrics import StructuralSimilarityIndexMeasure
 from torchmetrics import PeakSignalNoiseRatio
 import torch
 from torch.utils.data import DataLoader
-def train_model(batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4 ):
+def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4 ):
 
     wandb.init(project="ThermalSuperResolutionN", entity="kasliwal17",
-               config={'model':'resnet152 d5','fusion_technique':'img 2 encoders decoder-attention avg tanh x+p/10+z/100+y/10 saving:ssim',
+               config={'model':'resnet34 d5','fusion_technique':'img 2 encoders decoder-attention avg tanh x+p/10+z/100+y/10 saving:ssim',
                 'lr':lr, 'max_ssim':0, 'max_psnr':0})
 
     activation = 'tanh' 
@@ -28,7 +28,6 @@ def train_model(batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th
     )
 
     preprocessing_fn = smp.encoders.get_preprocessing_fn(encoder, encoder_weights)
-
 
     train_dataset = Dataset(
         hr_dir,
@@ -57,9 +56,8 @@ def train_model(batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th
         P,
     ]
 
-    learning_rate=1e-4##set learning rate here
     optimizer = torch.optim.Adam([ 
-        dict(params=model.parameters(), lr=learning_rate),
+        dict(params=model.parameters(), lr=lr),
     ])
 
     train_epoch = TrainEpoch(
@@ -83,7 +81,6 @@ def train_model(batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th
     max_ssim = 0
     max_psnr = 0
     counter = 0
-    epochs=250
     for i in range(0, epochs):
         
         print('\nEpoch: {}'.format(i))
@@ -102,3 +99,9 @@ def train_model(batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th
             counter = 0
         counter = counter+1
     print(f'max ssim: {max_ssim} max psnr: {max_psnr}')
+
+def train_model(configs):
+    train(configs['epochs'], configs['batch_size'], configs['hr_dir'],
+         configs['tar_dir'], configs['th_dir'], configs['hr_val_dir'],
+         configs['tar_val_dir'], configs['th_val_dir'], configs['encoder'],
+         configs['encoder_weights'], configs['device'], configs['lr'])
