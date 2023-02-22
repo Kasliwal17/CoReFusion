@@ -1,20 +1,20 @@
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset as BaseDataset
 import cv2
-from .misc import normalize_data
+from .misc import normalize_data, list_img
 
 class Dataset(BaseDataset):  
     def __init__(
             self, 
-            images_dir: list, 
-            fc_dir:list,
-            masks_dir: list, 
+            hr_dir: str, 
+            thermal_dir:str,
+            tar_dir: str, 
             augmentation=None, 
             preprocessing=None,
     ):
-        self.images_list = images_dir
-        self.fc_list=fc_dir
-        self.masks_list = masks_dir
+        self.hr_list = list_img(hr_dir)
+        self.thermal_list= list_img(thermal_dir)
+        self.tar_list = list_img(tar_dir)
         
         self.augmentation = augmentation
         self.preprocessing = preprocessing
@@ -22,10 +22,10 @@ class Dataset(BaseDataset):
     def __getitem__(self, i):
         
         # read data
-        himage = cv2.imread(self.images_list[i])
+        himage = cv2.imread(self.hr_list[i])
         himage = cv2.cvtColor(himage, cv2.COLOR_BGR2RGB)
-        target = cv2.imread(self.masks_list[i], 0)
-        timage = cv2.imread(self.fc_list[i])
+        target = cv2.imread(self.tar_list[i], 0)
+        timage = cv2.imread(self.thermal_list[i])
         # apply augmentations
         if self.augmentation:
             sample = self.augmentation(image=himage,image1=timage, mask=target)
@@ -44,3 +44,4 @@ class Dataset(BaseDataset):
         
     def __len__(self):
         return len(self.images_list)
+
