@@ -108,7 +108,6 @@ class Unet(SegmentationModel):
         classes: int = 1,
         activation: Optional[Union[str, callable]] = None,
         contrastive: bool = False,
-        aux_params: Optional[dict] = None,
     ):
         super().__init__()
         self.fusion=fusion
@@ -142,11 +141,6 @@ class Unet(SegmentationModel):
             kernel_size=3,
         )
 
-        if aux_params is not None:
-            self.classification_head = ClassificationHead(in_channels=self.encoder.out_channels[-1], **aux_params)
-        else:
-            self.classification_head = None
-            
         if contrastive:
             self.contrastive_head1= nn.Sequential(
                                        nn.AdaptiveAvgPool2d(1),
