@@ -50,11 +50,11 @@ class ContrastiveLoss(nn.Module):
         return loss
 
 class custom_loss(base.Loss):
-    def __init__(self):
+    def __init__(self, batch_size):
         super().__init__()
         self.ssim = StructuralSimilarityIndexMeasure()
         self.mse = nn.MSELoss()
-        self.contrast = ContrastiveLoss(4)
+        self.contrast = ContrastiveLoss(batch_size)
         self.psnr = PeakSignalNoiseRatio()
         self.L1 = nn.L1Loss()
     def forward(self, y_pr, y_gt, ft1=None, ft2=None):
