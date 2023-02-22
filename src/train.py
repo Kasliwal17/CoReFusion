@@ -1,5 +1,6 @@
 import argparse
-from utils.trainer import train_model
+from .utils.trainer import train_model
+
 def main(args):
     config = {
         'hr_dir': args.hr_dir,
@@ -19,14 +20,7 @@ def main(args):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(
-    )
-    # parser.add_argument('--hr_dir', type=str, required=False, default='/kaggle/input/thermalsuperresolution/train_val/training/train_VIS_HR')
-    # parser.add_argument('--th_dir', type=str, required=False, default='/kaggle/input/thermalsuperresolution/train_val/training/train_input_THER_LR_bicubic/X8')
-    # parser.add_argument('--tar_dir', type=str, required=False, default='/kaggle/input/thermalsuperresolution/train_val/training/train_output_gt_THER_HR')
-    # parser.add_argument('--hr_val_dir', type=str, required=False, default='/kaggle/input/thermalsuperresolution/train_val/validation/valid_VIS_HR')
-    # parser.add_argument('--th_val_dir', type=str, required=False, default='/kaggle/input/thermalsuperresolution/train_val/validation/valid_input_THER_LR_bicubic/X8')
-    # parser.add_argument('--tar_val_dir', type=str, required=False, default='/kaggle/input/thermalsuperresolution/train_val/validation/valid_output_gt_THER_HR')
+    parser = argparse.ArgumentParser()
     parser.add_argument('--hr_dir', type=str, required=False, default='./Dataset/train_val/training/train_VIS_HR')
     parser.add_argument('--th_dir', type=str, required=False, default='./Dataset/train_val/training/train_input_THER_LR_bicubic/X8')
     parser.add_argument('--tar_dir', type=str, required=False, default='./Dataset/train_val/training/train_output_gt_THER_HR')
