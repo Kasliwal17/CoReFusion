@@ -43,5 +43,5 @@ class Dataset(BaseDataset):
         return himage,timage, target#, label
         
     def __len__(self):
-        return len(self.images_list)
+        return len(self.hr_list)
 
