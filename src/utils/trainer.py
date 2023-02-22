@@ -9,8 +9,8 @@ from torchmetrics import StructuralSimilarityIndexMeasure
 from torchmetrics import PeakSignalNoiseRatio
 import torch
 from torch.utils.data import DataLoader
-def train_model(encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4):
-    
+def train_model(batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4 ):
+
     wandb.init(project="ThermalSuperResolutionN", entity="kasliwal17",
                config={'model':'resnet152 d5','fusion_technique':'img 2 encoders decoder-attention avg tanh x+p/10+z/100+y/10 saving:ssim',
                 'lr':lr, 'max_ssim':0, 'max_psnr':0})
@@ -25,28 +25,27 @@ def train_model(encoder='resnet34', encoder_weights='imagenet', device='cuda', l
         activation=activation,
         fusion=True,
         contrastive=True,
-        decoder_attention_type='scse',
     )
 
-    preprocessing_fn = smp.encoders.get_preprocessing_fn(ENCODER, ENCODER_WEIGHTS)
+    preprocessing_fn = smp.encoders.get_preprocessing_fn(encoder, encoder_weights)
 
 
     train_dataset = Dataset(
-        inputs1_train,
-        inputs2_train,
-        targets_train,
+        hr_dir,
+        th_dir,
+        tar_dir,
         augmentation=get_training_augmentation(), 
         preprocessing=get_preprocessing(preprocessing_fn)
     )
     valid_dataset = Dataset(
-        inputs1_valid,
-        inputs2_valid,
-        targets_valid,
+        hr_val_dir,
+        th_val_dir,
+        tar_val_dir,
         augmentation=get_validation_augmentation(), 
         preprocessing=get_preprocessing(preprocessing_fn)
     )
-    train_loader = DataLoader(train_dataset, batch_size=4, shuffle=True)
-    valid_loader = DataLoader(valid_dataset, batch_size=4, shuffle=True, drop_last=True)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 
     loss = custom_loss()
     Z = StructuralSimilarityIndexMeasure()
@@ -102,3 +101,4 @@ def train_model(encoder='resnet34', encoder_weights='imagenet', device='cuda', l
             print('Model saved!')
             counter = 0
         counter = counter+1
+    print(f'max ssim: {max_ssim} max psnr: {max_psnr}')
