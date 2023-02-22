@@ -13,7 +13,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
     
     wandb.init(project="ThermalSuperResolutionN", entity="kasliwal17",
                config={'model':'resnet34 d5','fusion_technique':'img 2 encoders decoder-attention avg tanh x+p/10+z/100+y/10 saving:ssim',
-                'lr':lr, 'max_ssim':0, 'max_psnr':0})
+                'lr':lr, 'max_ssim':0, 'max_psnr':0}, allow_val_change=True)
 
     activation = 'tanh' 
     # create segmentation model with pretrained encoder
