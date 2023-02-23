@@ -166,7 +166,8 @@ class SegmentationModel(torch.nn.Module):
 #                 features[ind] = torch.maximum(features[ind],features1[ind])
 #                 features[ind] = torch.cat((features[ind],features1[ind]),1)
             features[-1] = self.cbam(torch.cat((features[-1],features1[-1]),1))
-            features[-1] = features[-1][:,0:3,:,:]+features[-1][:,3:6,:,:]
+            s = features[-1].shape[1]
+            features[-1] = features[-1][:,0:s/2,:,:]+features[-1][:,s/2:s,:,:]
         decoder_output = self.decoder(*features)
 
         masks = self.segmentation_head(decoder_output)
