@@ -161,11 +161,11 @@ class SegmentationModel(torch.nn.Module):
             f1 = features[-1]
             f2 = features1[-1]
             
-            for ind in range(len(features)):
+            for ind in range(len(features)-1):
                 features[ind] = (features[ind]+features1[ind])/2
 #                 features[ind] = torch.maximum(features[ind],features1[ind])
 #                 features[ind] = torch.cat((features[ind],features1[ind]),1)
-    
+            features[-1] = self.cbam(torch.cat((features[-1],features1[-1]),1))
         decoder_output = self.decoder(*features)
 
         masks = self.segmentation_head(decoder_output)
@@ -219,6 +219,7 @@ class Unet(SegmentationModel):
             depth=encoder_depth,
             weights=encoder_weights,
         )
+        self.cbam = CBAM(2*self.encoder.out_channels[-1], 16)
 
         self.decoder = UnetDecoder(
             encoder_channels=(self.encoder.out_channels),
