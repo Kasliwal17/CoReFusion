@@ -165,6 +165,8 @@ class SegmentationModel(torch.nn.Module):
                 # features[ind] = (features[ind]+features1[ind])/2
 #                 features[ind] = torch.maximum(features[ind],features1[ind])
 #                 features[ind] = torch.cat((features[ind],features1[ind]),1)
+                if x.is_cuda:
+                    self.cbam[ind] = self.cbam[ind].cuda()
                 features[ind] = self.cbam[ind](torch.cat((features[ind],features1[ind]),1))
                 s = int(features[ind].shape[1])
                 features[ind] = features[ind][:,0:int(s/2),:,:]+features[ind][:,int(s/2):int(s),:,:]
