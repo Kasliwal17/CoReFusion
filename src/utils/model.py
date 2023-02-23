@@ -61,7 +61,7 @@ class ChannelGate(nn.Module):
             else:
                 channel_att_sum = channel_att_sum + channel_att_raw
 
-        scale = F.sigmoid( channel_att_sum ).unsqueeze(2).unsqueeze(3).expand_as(x)
+        scale = torch.sigmoid( channel_att_sum ).unsqueeze(2).unsqueeze(3).expand_as(x)
         return x * scale
 
 def logsumexp_2d(tensor):
@@ -83,7 +83,7 @@ class SpatialGate(nn.Module):
     def forward(self, x):
         x_compress = self.compress(x)
         x_out = self.spatial(x_compress)
-        scale = F.sigmoid(x_out) # broadcasting
+        scale = torch.sigmoid(x_out) # broadcasting
         return x * scale
 
 class CBAM(nn.Module):
@@ -166,8 +166,8 @@ class SegmentationModel(torch.nn.Module):
 #                 features[ind] = torch.maximum(features[ind],features1[ind])
 #                 features[ind] = torch.cat((features[ind],features1[ind]),1)
             features[-1] = self.cbam(torch.cat((features[-1],features1[-1]),1))
-            s = features[-1].shape[1]
-            features[-1] = features[-1][:,0:s/2,:,:]+features[-1][:,s/2:s,:,:]
+            s = int(features[-1].shape[1])
+            features[-1] = features[-1][:,0:int(s/2),:,:]+features[-1][:,int(s/2):int(s),:,:]
         decoder_output = self.decoder(*features)
 
         masks = self.segmentation_head(decoder_output)
