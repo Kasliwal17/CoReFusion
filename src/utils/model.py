@@ -223,8 +223,8 @@ class Unet(SegmentationModel):
         self.cbam = nn.ModuleList([CBAM(2*item, 16) for item in self.encoder.out_channels])
 
         self.decoder = UnetDecoder(
-            encoder_channels=(self.encoder.out_channels),
-#             encoder_channels=tuple([2*item for item in self.encoder.out_channels]),
+#             encoder_channels=(self.encoder.out_channels),
+            encoder_channels=tuple([2*item for item in self.encoder.out_channels]),
             decoder_channels=decoder_channels,
             n_blocks=encoder_depth,
             use_batchnorm=decoder_use_batchnorm,
