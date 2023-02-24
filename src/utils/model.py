@@ -136,7 +136,7 @@ class Unet(SegmentationModel):
         )
 
         self.segmentation_head = SegmentationHead(
-            in_channels=decoder_channels[-1],
+            in_channels=decoder_channels[-1]*2,
             out_channels=classes,
             activation=activation,
             kernel_size=3,
