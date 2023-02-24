@@ -160,12 +160,12 @@ class SegmentationModel(torch.nn.Module):
             
             f1 = features[-1]
             f2 = features1[-1]
-            features[0] = (features[0] + features1[0])/2
+            features[0] = torch.cat((features[0] + features1[0]),1)
             for ind in range(1,len(features)):
                 features[ind] = torch.cat((features[ind],features1[ind]),1)
                 features[ind] = self.cbam[ind](features[ind])
-                s = int(features[ind].shape[1])
-                features[ind] = features[ind][:,0:int(s/2),:,:]+features[ind][:,int(s/2):int(s),:,:]
+#                 s = int(features[ind].shape[1])
+#                 features[ind] = features[ind][:,0:int(s/2),:,:]+features[ind][:,int(s/2):int(s),:,:]
         decoder_output = self.decoder(*features)
 
         masks = self.segmentation_head(decoder_output)
