@@ -61,7 +61,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
     optimizer = torch.optim.Adam([ 
         dict(params=model.parameters(), lr=lr),
     ])
-
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer)
     train_epoch = TrainEpoch(
         model, 
         loss=loss, 
@@ -88,6 +88,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         print('\nEpoch: {}'.format(i))
         train_logs = train_epoch.run(train_loader)
         valid_logs = valid_epoch.run(valid_loader)
+        scheduler.step()
         print(train_logs)
         wandb.log({'epoch':i+1,'t_loss':train_logs['custom_loss'],'t_ssim':train_logs['ssim'],'v_loss':valid_logs['custom_lossv'],'v_ssim':valid_logs['ssim']})
         # do something (save model, change lr, etc.)
