@@ -161,8 +161,9 @@ class SegmentationModel(torch.nn.Module):
             f1 = features[-1]
             f2 = features1[-1]
             
-            for ind in range(len(features)-1):
+            for ind in range(len(features)):
                 features[ind] = torch.cat((features[ind],features1[ind]),1)
+                print(features[ind].size())
                 if torch.numel(features[ind])>0:
                     features[ind] = self.cbam[ind](features[ind])
                 s = int(features[ind].shape[1])
