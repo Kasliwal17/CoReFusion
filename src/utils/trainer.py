@@ -1,7 +1,7 @@
 import wandb
 import segmentation_models_pytorch as smp
 from .train_utils import TrainEpoch, ValidEpoch
-from .loss import custom_loss
+from .loss import custom_loss, custom_lossv
 from .dataloader import Dataset
 from .transformations import get_training_augmentation, get_validation_augmentation, get_preprocessing
 from .model import Unet
@@ -47,6 +47,8 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 
     loss = custom_loss(batch_size)
+    lossV = custom_lossv()
+
     Z = StructuralSimilarityIndexMeasure()
     P = PeakSignalNoiseRatio()
     P.__name__ = 'psnr'
@@ -71,7 +73,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
     )
     valid_epoch = ValidEpoch(
         model, 
-        loss=loss, 
+        loss=lossV, 
         metrics=metrics, 
         device=device,
         verbose=True,
@@ -87,7 +89,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         train_logs = train_epoch.run(train_loader)
         valid_logs = valid_epoch.run(valid_loader)
         print(train_logs)
-        wandb.log({'epoch':i+1,'t_loss':train_logs['custom_loss'],'t_ssim':train_logs['ssim'],'v_loss':valid_logs['custom_loss'],'v_ssim':valid_logs['ssim']})
+        wandb.log({'epoch':i+1,'t_loss':train_logs['custom_loss'],'t_ssim':train_logs['ssim'],'v_loss':valid_logs['custom_lossv'],'v_ssim':valid_logs['ssim']})
         # do something (save model, change lr, etc.)
         if max_ssim <= valid_logs['ssim']:
             max_ssim = valid_logs['ssim']

@@ -67,4 +67,19 @@ class custom_loss(base.Loss):
 #         return x
 #         return x+y/10+z/100
         return x+p/10+z/100+y/10
+    
+class custom_lossv(base.Loss):
+    def __init__(self):
+        super().__init__()
+        self.ssim = StructuralSimilarityIndexMeasure()
+        self.mse = nn.MSELoss()
+        # self.contrast = ContrastiveLoss(batch_size)
+        self.psnr = PeakSignalNoiseRatio()
+        self.L1 = nn.L1Loss()
+    def forward(self, y_pr, y_gt, ft1=None, ft2=None):
+        x=self.mse(y_pr, y_gt)
+        y=1-self.ssim(y_pr, y_gt)
+        # z=self.contrast(ft1, ft2)
+        p=(1 - self.psnr(y_pr, y_gt)/40)
+        return x+p/10+y/10
         
