@@ -61,7 +61,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
     optimizer = torch.optim.Adam([ 
         dict(params=model.parameters(), lr=lr),
     ])
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer)
+    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,250)
     train_epoch = TrainEpoch(
         model, 
         loss=loss, 
