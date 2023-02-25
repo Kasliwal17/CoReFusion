@@ -125,7 +125,7 @@ class Unet(SegmentationModel):
         )
 
         self.decoder = UnetDecoder(
-            encoder_channels=(self.encoder.out_channels),
+            # encoder_channels=(self.encoder.out_channels),
             encoder_channels=tuple([2*item for item in self.encoder.out_channels]),
             # decoder_channels=decoder_channels,
             decoder_channels=tuple([2*item for item in decoder_channels]),
