@@ -66,9 +66,9 @@ class SegmentationModel(torch.nn.Module):
             f2 = features1[-1]
             
             for ind in range(len(features)):
-                features[ind] = (features[ind]+features1[ind])/2
+                # features[ind] = (features[ind]+features1[ind])/2
 #                 features[ind] = torch.maximum(features[ind],features1[ind])
-#                 features[ind] = torch.cat((features[ind],features1[ind]),1)
+                features[ind] = torch.cat((features[ind],features1[ind]),1)
     
         decoder_output = self.decoder(*features)
 
@@ -126,9 +126,9 @@ class Unet(SegmentationModel):
 
         self.decoder = UnetDecoder(
             encoder_channels=(self.encoder.out_channels),
-#             encoder_channels=tuple([2*item for item in self.encoder.out_channels]),
-            decoder_channels=decoder_channels,
-            # decoder_channels=tuple([2*item for item in decoder_channels]),
+            encoder_channels=tuple([2*item for item in self.encoder.out_channels]),
+            # decoder_channels=decoder_channels,
+            decoder_channels=tuple([2*item for item in decoder_channels]),
             n_blocks=encoder_depth,
             use_batchnorm=decoder_use_batchnorm,
             center=True if encoder_name.startswith("vgg") else False,
@@ -136,7 +136,7 @@ class Unet(SegmentationModel):
         )
 
         self.segmentation_head = SegmentationHead(
-            in_channels=decoder_channels[-1],#*2,
+            in_channels=decoder_channels[-1]*2,
             out_channels=classes,
             activation=activation,
             kernel_size=3,

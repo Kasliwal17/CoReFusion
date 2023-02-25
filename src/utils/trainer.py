@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4 ):
     
     wandb.init(project="ThermalSuperResolutionN", entity="kasliwal17",
-               config={'model':'resnet34 d5','fusion_technique':'img 2 encoders decoder*2-attention avg tanh x+p/10+z/100+y/10 saving:ssim',
+               config={'model':'resnet34 d5','fusion_technique':'img 2 encoders concat decoder*2 avg tanh x+p/10+z/100+y/10 saving:ssim',
                 'lr':lr, 'max_ssim':0, 'max_psnr':0}, allow_val_change=True)
 
     activation = 'tanh' 
@@ -61,7 +61,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
     optimizer = torch.optim.Adam([ 
         dict(params=model.parameters(), lr=lr),
     ])
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,250)
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,250)
     train_epoch = TrainEpoch(
         model, 
         loss=loss, 
@@ -88,7 +88,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         print('\nEpoch: {}'.format(i))
         train_logs = train_epoch.run(train_loader)
         valid_logs = valid_epoch.run(valid_loader)
-        scheduler.step()
+        # scheduler.step()
         print(train_logs)
         wandb.log({'epoch':i+1,'t_loss':train_logs['custom_loss'],'t_ssim':train_logs['ssim'],'v_loss':valid_logs['custom_lossv'],'v_ssim':valid_logs['ssim']})
         # do something (save model, change lr, etc.)
