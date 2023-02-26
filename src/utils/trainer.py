@@ -56,8 +56,8 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         dict(params=model.parameters(), lr=lr),
     ])
     if pretrain:
-        model.encoder.load_state_dict('encoder.pth')
-        model.encoder2.load_state_dict('encoder2.pth')
+        model.encoder.load_state_dict(torch.load('./encoder.pth', map_location=torch.device(device)))
+        model.encoder2.load_state_dict(torch.load('./encoder2.pth', map_location=torch.device(device)))
         ##define optimizer excluding model.encoder and model.encoder2
         optimizer = torch.optim.Adam([
             dict(params=model.decoder.parameters(), lr=lr),

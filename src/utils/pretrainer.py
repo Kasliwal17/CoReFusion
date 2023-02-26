@@ -76,8 +76,8 @@ def pretrain(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_di
         if min_loss >= valid_logs['custom_loss']:
             min_loss = valid_logs['custom_loss']
             wandb.config.update({'min_loss':min_loss}, allow_val_change=True)
-            torch.save(model.encoder.state_dict(), 'encoder.pth')
-            torch.save(model.encoder2.state_dict(), 'encoder2.pth')
+            torch.save(model.encoder.state_dict(), './encoder.pth')
+            torch.save(model.encoder2.state_dict(), './encoder2.pth')
             print('encoders saved!')
             counter = 0
         counter = counter+1
