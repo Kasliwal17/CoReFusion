@@ -59,16 +59,25 @@ class SegmentationModel(torch.nn.Module):
         self.check_input_shape(x)
 
         features = self.encoder(x)
-        if self.fusion == True:
+        
+        if self.pretrain:
             features1 = self.encoder2(y)
-            
+            f1 = features[-1]
+            f2 = features1[-1]
+            f1 = self.contrastive_head1(f1)
+            f2 = self.contrastive_head2(f2)
+            return f1, f2
+        
+        if y is not None:
+            features1 = self.encoder2(y)
+
             f1 = features[-1]
             f2 = features1[-1]
             
             for ind in range(len(features)):
-                # features[ind] = (features[ind]+features1[ind])/2
+                features[ind] = (features[ind]+features1[ind])/2
 #                 features[ind] = torch.maximum(features[ind],features1[ind])
-                features[ind] = torch.cat((features[ind],features1[ind]),1)
+                # features[ind] = torch.cat((features[ind],features1[ind]),1)
     
         decoder_output = self.decoder(*features)
 
@@ -100,7 +109,6 @@ class Unet(SegmentationModel):
         encoder_name: str = "resnet34",
         encoder_depth: int = 5,
         encoder_weights: Optional[str] = "imagenet",
-        fusion:bool=True,
         decoder_use_batchnorm: bool = True,
         decoder_channels: List[int] = (256, 128, 64, 32, 16),
         decoder_attention_type: Optional[str] = None,
@@ -108,9 +116,11 @@ class Unet(SegmentationModel):
         classes: int = 1,
         activation: Optional[Union[str, callable]] = None,
         contrastive: bool = False,
+        pretrain: bool = False,
     ):
         super().__init__()
-        self.fusion=fusion
+        self.pretrain = pretrain
+
         self.encoder = get_encoder(
             encoder_name,
             in_channels=in_channels,
@@ -125,10 +135,10 @@ class Unet(SegmentationModel):
         )
 
         self.decoder = UnetDecoder(
-            # encoder_channels=(self.encoder.out_channels),
-            encoder_channels=tuple([2*item for item in self.encoder.out_channels]),
-            # decoder_channels=decoder_channels,
-            decoder_channels=tuple([2*item for item in decoder_channels]),
+            encoder_channels=(self.encoder.out_channels),
+            # encoder_channels=tuple([2*item for item in self.encoder.out_channels]),
+            decoder_channels=decoder_channels,
+            # decoder_channels=tuple([2*item for item in decoder_channels]),
             n_blocks=encoder_depth,
             use_batchnorm=decoder_use_batchnorm,
             center=True if encoder_name.startswith("vgg") else False,
@@ -136,7 +146,7 @@ class Unet(SegmentationModel):
         )
 
         self.segmentation_head = SegmentationHead(
-            in_channels=decoder_channels[-1]*2,
+            in_channels=decoder_channels[-1],#*2,
             out_channels=classes,
             activation=activation,
             kernel_size=3,

@@ -44,3 +44,40 @@ class Dataset(BaseDataset):
         
     def __len__(self):
         return len(self.hr_list)
+    
+class Pretrain_Dataset(BaseDataset):  
+    def __init__(
+            self, 
+            hr_dir: str, 
+            thermal_dir:str,
+            tar_dir: str, 
+            augmentation=None, 
+            preprocessing=None,
+    ):
+        self.hr_list = list_img(hr_dir)
+        self.thermal_list= list_img(thermal_dir)
+        self.tar_list = list_img(tar_dir)
+        
+        self.augmentation = augmentation
+        self.preprocessing = preprocessing
+    
+    def __getitem__(self, i):
+        
+        # read data
+        himage = cv2.imread(self.hr_list[i])
+        himage = cv2.cvtColor(himage, cv2.COLOR_BGR2RGB)
+        timage = cv2.imread(self.thermal_list[i])
+        # apply augmentations
+        if self.augmentation:
+            sample = self.augmentation(image=himage,image1=timage)
+            himage, timage= sample['image'], sample['image1']
+#         timage = timage.reshape(480,640,1)
+        if self.preprocessing:
+            sample = self.preprocessing(image=himage)
+            himage = sample['image']
+            sample = self.preprocessing(image=timage)
+            timage= sample['image']
+        return himage,timage
+        
+    def __len__(self):
+        return len(self.hr_list)

@@ -1,5 +1,7 @@
 import argparse
 from .utils.trainer import train_model
+from .utils.pretrainer import pre_train_model
+import wandb
 
 def main(args):
     config = {
@@ -15,7 +17,14 @@ def main(args):
         'encoder': args.encoder,
         'encoder_weights': args.encoder_weights,
         'lr': args.lr,
+        'pretrain': True if args.pretrain =='True' else False
     }
+    wandb.init(project="ThermalSuperResolutionN", entity="kasliwal17",
+               config={'model':'resnet34 d5','fusion_technique':'img 2 encoders concat decoder*2 avg tanh x+p/10+z/100+y/10 saving:ssim',
+                'lr':args.lr, 'max_ssim':0, 'max_psnr':0, 'min_loss':1000}, allow_val_change=True)
+    if args.pretrain:
+        pre_train_model(config)
+        print('Pretraining done')
     train_model(config)
 
 if __name__ == '__main__':
@@ -33,5 +42,6 @@ if __name__ == '__main__':
     parser.add_argument('--encoder', type=str, required=False, default='resnet34')
     parser.add_argument('--encoder_weights', type=str, required=False, default='imagenet')
     parser.add_argument('--lr', type=float, required=False, default=1e-4)
+    parser.add_argument('--pretrain', type=str, required=False, default='True')
     arguments = parser.parse_args()
     main(arguments)

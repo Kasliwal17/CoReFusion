@@ -50,36 +50,26 @@ class ContrastiveLoss(nn.Module):
         return loss
 
 class custom_loss(base.Loss):
-    def __init__(self, batch_size):
+    def __init__(self, batch_size, pretrain=False):
         super().__init__()
         self.ssim = StructuralSimilarityIndexMeasure()
         self.mse = nn.MSELoss()
         self.contrast = ContrastiveLoss(batch_size)
         self.psnr = PeakSignalNoiseRatio()
         self.L1 = nn.L1Loss()
+        self.pretrain = pretrain
     def forward(self, y_pr, y_gt, ft1=None, ft2=None):
         x=self.mse(y_pr, y_gt)
         y=1-self.ssim(y_pr, y_gt)
-        z=self.contrast(ft1, ft2)
+        if not self.pretrain:
+            z=self.contrast(ft1, ft2)
         p=(1 - self.psnr(y_pr, y_gt)/40)
 #         l = self.L1(y_pr, y_gt)
 #         print(x,y,z)
 #         return x
 #         return x+y/10+z/100
+        if self.pretrain:
+            return x+p/10+y/10
         return x+p/10+z/100+y/10
     
-class custom_lossv(base.Loss):
-    def __init__(self):
-        super().__init__()
-        self.ssim = StructuralSimilarityIndexMeasure()
-        self.mse = nn.MSELoss()
-        # self.contrast = ContrastiveLoss(batch_size)
-        self.psnr = PeakSignalNoiseRatio()
-        self.L1 = nn.L1Loss()
-    def forward(self, y_pr, y_gt, ft1=None, ft2=None):
-        x=self.mse(y_pr, y_gt)
-        y=1-self.ssim(y_pr, y_gt)
-        # z=self.contrast(ft1, ft2)
-        p=(1 - self.psnr(y_pr, y_gt)/40)
-        return x+p/10+y/10
         

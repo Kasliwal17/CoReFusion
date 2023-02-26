@@ -1,15 +1,13 @@
 import wandb
 import segmentation_models_pytorch as smp
-from .train_utils import TrainEpoch, ValidEpoch
-from .loss import custom_loss
-from .dataloader import Dataset
+from .pretrain_utils import TrainEpoch, ValidEpoch
+from .loss import ContrastiveLoss as custom_loss
+from .dataloader import Pretrain_Dataset as Dataset
 from .transformations import get_training_augmentation, get_validation_augmentation, get_preprocessing
 from .model import Unet
-from torchmetrics import StructuralSimilarityIndexMeasure
-from torchmetrics import PeakSignalNoiseRatio
 import torch
 from torch.utils.data import DataLoader
-def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4, pretrain =False ):
+def pretrain(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4 ):
 
     activation = 'tanh' 
     # create segmentation model with pretrained encoder
@@ -20,7 +18,9 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         classes=1, 
         activation=activation,
         contrastive=True,
+        pretrain=True
     )
+
     preprocessing_fn = smp.encoders.get_preprocessing_fn(encoder, encoder_weights)
 
     train_dataset = Dataset(
@@ -38,37 +38,17 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         preprocessing=get_preprocessing(preprocessing_fn)
     )
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True)#, drop_last=True)
+    valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
 
-    loss = custom_loss(batch_size, pretrain=pretrain)
-    lossV = custom_loss(batch_size, pretrain=True)
-
-    Z = StructuralSimilarityIndexMeasure()
-    P = PeakSignalNoiseRatio()
-    P.__name__ = 'psnr'
-    Z.__name__ = 'ssim'
-    metrics = [
-        Z,
-        P,
-    ]
-
+    loss = custom_loss(batch_size)
+    loss.__name__='custom_loss'
     optimizer = torch.optim.Adam([ 
         dict(params=model.parameters(), lr=lr),
     ])
-    if pretrain:
-        model.encoder.load_state_dict('./encoder.pth')
-        model.encoder2.load_state_dict('./encoder2.pth')
-        ##define optimizer excluding model.encoder and model.encoder2
-        optimizer = torch.optim.Adam([
-            dict(params=model.decoder.parameters(), lr=lr),
-            dict(params=model.segmentation_head.parameters(), lr=lr),
-        ])
-
     # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,250)
     train_epoch = TrainEpoch(
         model, 
         loss=loss, 
-        metrics=metrics, 
         optimizer=optimizer,
         device=device,
         verbose=True,
@@ -76,40 +56,37 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
     )
     valid_epoch = ValidEpoch(
         model, 
-        loss=lossV, 
-        metrics=metrics, 
+        loss=loss, 
         device=device,
         verbose=True,
         contrastive=True
     )
 
-    max_ssim = 0
-    max_psnr = 0
+    min_loss = 100000
     counter = 0
     for i in range(0, epochs):
         
         print('\nEpoch: {}'.format(i))
         train_logs = train_epoch.run(train_loader)
         valid_logs = valid_epoch.run(valid_loader)
-        # scheduler.step()
+
         print(train_logs)
-        wandb.log({'epoch':i+1,'t_loss':train_logs['custom_loss'],'t_ssim':train_logs['ssim'],'v_loss':valid_logs['custom_lossv'],'v_ssim':valid_logs['ssim']})
+        wandb.log({'pr_epoch':i+1,'pre_t_loss':train_logs['custom_loss'],'pre_v_loss':valid_logs['custom_loss']})
         # do something (save model, change lr, etc.)
-        if max_ssim <= valid_logs['ssim']:
-            max_ssim = valid_logs['ssim']
-            max_psnr = valid_logs['psnr']
-            wandb.config.update({'max_ssim':max_ssim, 'max_psnr':max_psnr}, allow_val_change=True)
-            torch.save(model.state_dict(), './best_model.pth')
-            print('Model saved!')
+        if min_loss >= valid_logs['custom_loss']:
+            min_loss = valid_logs['custom_loss']
+            wandb.config.update({'min_loss':min_loss}, allow_val_change=True)
+            torch.save(model.encoder.state_dict(), './encoder.pth')
+            torch.save(model.encoder2.state_dict(), './encoder2.pth')
+            print('encoders saved!')
             counter = 0
         counter = counter+1
-        if counter>20:
+        if counter>10:
             break
-    print(f'max ssim: {max_ssim} max psnr: {max_psnr}')
 
-def train_model(configs):
-    train(configs['epochs'], configs['batch_size'], configs['hr_dir'],
+def pre_train_model(configs):
+    pretrain(configs['epochs'], configs['batch_size'], configs['hr_dir'],
          configs['tar_dir'], configs['th_dir'], configs['hr_val_dir'],
          configs['tar_val_dir'], configs['th_val_dir'], configs['encoder'],
-         configs['encoder_weights'], configs['device'], configs['lr'], configs['pretrain'])
+         configs['encoder_weights'], configs['device'], configs['lr'])
          
