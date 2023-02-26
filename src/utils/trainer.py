@@ -112,6 +112,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         if counter>20:
             break
     print(f'max ssim: {max_ssim} max psnr: {max_psnr}')
+    del model
 
 def train_model(configs):
     train(configs['epochs'], configs['batch_size'], configs['hr_dir'],
