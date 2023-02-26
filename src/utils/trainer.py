@@ -52,16 +52,19 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         P,
     ]
 
-    optimizer = torch.optim.Adam([ 
-        dict(params=model.parameters(), lr=lr),
-    ])
+    
     if pretrain:
         model.encoder.load_state_dict(torch.load('./encoder.pth', map_location=torch.device(device)))
         model.encoder2.load_state_dict(torch.load('./encoder2.pth', map_location=torch.device(device)))
+        print('Encoder weights loaded!')
         ##define optimizer excluding model.encoder and model.encoder2
         optimizer = torch.optim.Adam([
             dict(params=model.decoder.parameters(), lr=lr),
             dict(params=model.segmentation_head.parameters(), lr=lr),
+        ])
+    else:
+        optimizer = torch.optim.Adam([ 
+            dict(params=model.parameters(), lr=lr),
         ])
 
     # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,250)
@@ -93,7 +96,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         valid_logs = valid_epoch.run(valid_loader)
         # scheduler.step()
         print(train_logs)
-        wandb.log({'epoch':i+1,'t_loss':train_logs['custom_loss'],'t_ssim':train_logs['ssim'],'v_loss':valid_logs['custom_lossv'],'v_ssim':valid_logs['ssim']})
+        wandb.log({'epoch':i+1,'t_loss':train_logs['custom_loss'],'t_ssim':train_logs['ssim'],'v_loss':valid_logs['custom_loss'],'v_ssim':valid_logs['ssim']})
         # do something (save model, change lr, etc.)
         if max_ssim <= valid_logs['ssim']:
             max_ssim = valid_logs['ssim']
