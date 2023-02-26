@@ -40,6 +40,47 @@ def get_training_augmentation():
 #         ),
     ]
     return albu.Compose(train_transform,additional_targets={'image1':'mask'})
+
+def get_pretraining_augmentation():
+    train_transform = [
+        albu.Resize(480,640,always_apply=True),
+        albu.HorizontalFlip(p=0.4),
+        albu.VerticalFlip(p=0.4),
+
+        albu.ShiftScaleRotate(p=0.4, border_mode=0),
+        
+        albu.RandomCrop(height=400, width=580, p=0.4),
+#         albu.ColorJitter(p=0.5),
+        albu.IAAAdditiveGaussianNoise(p=0.4),
+#         albu.IAAPerspective(p=0.5),
+        albu.PadIfNeeded(min_height=480, min_width=640, always_apply=True, border_mode=0),
+#         albu.OneOf(
+#             [
+#                 albu.CLAHE(p=1),
+#                 albu.RandomBrightness(p=1),
+#                 albu.RandomGamma(p=1),
+#             ],
+#             p=0.9,
+#         ),
+
+#         albu.OneOf(
+#             [
+#                 albu.IAASharpen(p=1),
+#                 albu.Blur(blur_limit=3, p=1),
+#                 albu.MotionBlur(blur_limit=3, p=1),
+#             ],
+#             p=0.9,
+#         ),
+
+#         albu.OneOf(
+#             [
+#                 albu.RandomContrast(p=1),
+#                 albu.HueSaturationValue(p=1),
+#             ],
+#             p=0.9,
+#         ),
+    ]
+    return albu.Compose(train_transform,additional_targets={'image1':'mask'})
     
 def get_validation_augmentation():
     test_transform = [

@@ -3,7 +3,7 @@ import segmentation_models_pytorch as smp
 from .pretrain_utils import TrainEpoch, ValidEpoch
 from .loss import ContrastiveLoss as custom_loss
 from .dataloader import Pretrain_Dataset as Dataset
-from .transformations import get_training_augmentation, get_validation_augmentation, get_preprocessing
+from .transformations import get_pretraining_augmentation, get_validation_augmentation, get_preprocessing
 from .model import Unet
 import torch
 from torch.utils.data import DataLoader
@@ -27,7 +27,7 @@ def pretrain(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_di
         hr_dir,
         th_dir,
         tar_dir,
-        augmentation=get_training_augmentation(), 
+        augmentation=get_pretraining_augmentation(), 
         preprocessing=get_preprocessing(preprocessing_fn)
     )
     valid_dataset = Dataset(
