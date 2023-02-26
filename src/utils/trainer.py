@@ -9,7 +9,7 @@ from torchmetrics import StructuralSimilarityIndexMeasure
 from torchmetrics import PeakSignalNoiseRatio
 import torch
 from torch.utils.data import DataLoader
-def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4, pretrain =False ):
+def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, th_val_dir,encoder='resnet34', encoder_weights='imagenet', device='cuda', lr=1e-4, pretrain =False, checkpoint='' ):
 
     activation = 'tanh' 
     # create segmentation model with pretrained encoder
@@ -66,6 +66,9 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         optimizer = torch.optim.Adam([ 
             dict(params=model.parameters(), lr=lr),
         ])
+        if checkpoint != '':
+            model.load_state_dict(torch.load(checkpoint, map_location=torch.device(device)))
+            print('Model weights loaded!')
 
     # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer,250)
     train_epoch = TrainEpoch(

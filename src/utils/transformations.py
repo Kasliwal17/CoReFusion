@@ -49,11 +49,11 @@ def get_pretraining_augmentation():
 
         # albu.ShiftScaleRotate(p=0.4, border_mode=0),
         
-        albu.RandomCrop(height=400, width=580, p=0.4),
+        # albu.RandomCrop(height=400, width=580, p=0.4),
 #         albu.ColorJitter(p=0.5),
         # albu.IAAAdditiveGaussianNoise(p=0.4),
 #         albu.IAAPerspective(p=0.5),
-        albu.Resize(480,640,always_apply=True),
+        # albu.Resize(480,640,always_apply=True),
         albu.PadIfNeeded(min_height=480, min_width=640, always_apply=True, border_mode=0),
 #         albu.OneOf(
 #             [

@@ -17,7 +17,8 @@ def main(args):
         'encoder': args.encoder,
         'encoder_weights': args.encoder_weights,
         'lr': args.lr,
-        'pretrain': True if args.pretrain =='True' else False
+        'pretrain': True if args.pretrain =='True' else False,
+        'checkpoint': args.checkpoint
     }
     wandb.init(project="ThermalSuperResolutionN", entity="kasliwal17",
                config={'model':'resnet34 d5','fusion_technique':'img 2 encoders concat decoder*2 avg tanh x+p/10+z/100+y/10 saving:ssim',
@@ -25,6 +26,11 @@ def main(args):
     if args.pretrain:
         pre_train_model(config)
         print('Pretraining done')
+        print('Now training model with frozen encoders')
+        train_model(config)
+        config['batch_size']=100
+    config['pretrain']=False
+    print('Now training model with unfrozen encoders')
     train_model(config)
 
 if __name__ == '__main__':
@@ -43,5 +49,6 @@ if __name__ == '__main__':
     parser.add_argument('--encoder_weights', type=str, required=False, default='imagenet')
     parser.add_argument('--lr', type=float, required=False, default=1e-4)
     parser.add_argument('--pretrain', type=str, required=False, default='True')
+    parser.add_argument('--checkpoint', type=str, required=False, default='./best_model.pth')
     arguments = parser.parse_args()
     main(arguments)
