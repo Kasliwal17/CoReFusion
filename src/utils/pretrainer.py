@@ -84,6 +84,7 @@ def pretrain(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_di
         if counter>10:
             break
     del model
+    torch.cuda.empty_cache()
 
 def pre_train_model(configs):
     pretrain(configs['epochs'], configs['batch_size'], configs['hr_dir'],
