@@ -22,16 +22,17 @@ class Dataset(BaseDataset):
     def __getitem__(self, i):
         
         # read data
-        himage = cv2.imread(self.hr_list[i])
-        himage = cv2.cvtColor(himage, cv2.COLOR_BGR2RGB)
+        himage = cv2.imread(self.hr_list[i], 0)
+#         himage = cv2.cvtColor(himage, cv2.COLOR_BGR2RGB)
         target = cv2.imread(self.tar_list[i], 0)
-        timage = cv2.imread(self.thermal_list[i])
+        timage = cv2.imread(self.thermal_list[i], 0)
         # apply augmentations
         if self.augmentation:
             sample = self.augmentation(image=himage,image1=timage, mask=target)
             himage, target, timage= sample['image'], sample['mask'], sample['image1']
         target = target.reshape(480,640,1)
-#         timage = timage.reshape(480,640,1)
+        timage = timage.reshape(480,640,1)
+        himage = himage.reshape(480,640,1)
         if self.preprocessing:
             sample = self.preprocessing(image=himage, mask=target)
             himage, target = sample['image'], sample['mask']
