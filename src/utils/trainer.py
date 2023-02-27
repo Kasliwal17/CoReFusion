@@ -40,7 +40,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True)#, drop_last=True)
 
-    loss = custom_loss(batch_size, pretrain=True)
+    loss = custom_loss(batch_size, pretrain=pretrain)
     lossV = custom_loss(batch_size, pretrain=True)
 
     Z = StructuralSimilarityIndexMeasure()
