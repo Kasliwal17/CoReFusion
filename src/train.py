@@ -28,10 +28,9 @@ def main(args):
         print('Pretraining done')
         print('Now training model with frozen encoders')
         train_model(config)
-        config['batch_size']=100
-    config['pretrain']=False
-    print('Now training model with unfrozen encoders')
-    train_model(config)
+    else:
+        print('Training model with unfrozen encoders')
+        train_model(config)
 
 if __name__ == '__main__':
 
@@ -48,7 +47,7 @@ if __name__ == '__main__':
     parser.add_argument('--encoder', type=str, required=False, default='resnet34')
     parser.add_argument('--encoder_weights', type=str, required=False, default='imagenet')
     parser.add_argument('--lr', type=float, required=False, default=1e-4)
-    parser.add_argument('--pretrain', type=str, required=False, default='True')
+    parser.add_argument('--pretrain', type=str, required=False, default='False')
     parser.add_argument('--checkpoint', type=str, required=False, default='./best_model.pth')
     arguments = parser.parse_args()
     main(arguments)
