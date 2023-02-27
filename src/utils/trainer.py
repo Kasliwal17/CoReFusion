@@ -109,7 +109,7 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
             print('Model saved!')
             counter = 0
         counter = counter+1
-        if counter>20:
+        if counter>50:
             break
     print(f'max ssim: {max_ssim} max psnr: {max_psnr}')
     del model
