@@ -2,6 +2,7 @@ import argparse
 from .utils.trainer import train_model
 from .utils.pretrainer import pre_train_model
 import wandb
+import torch
 
 def main(args):
     config = {
@@ -28,9 +29,10 @@ def main(args):
         print('Pretraining done')
         print('Now training model with frozen encoders')
         train_model(config)
-    else:
-        print('Training model with unfrozen encoders')
-        train_model(config)
+        torch.cuda.synchronize()
+    config['pretrain'] = False
+    print('Training model with unfrozen encoders')
+    train_model(config)
 
 if __name__ == '__main__':
 
