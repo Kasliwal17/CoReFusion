@@ -3,7 +3,7 @@ import segmentation_models_pytorch as smp
 from .train_utils import TrainEpoch, ValidEpoch
 from .loss import custom_loss, custom_lossv
 from .dataloader import Dataset
-from .transformations import get_training_augmentation, get_validation_augmentation, get_preprocessing
+from .transformations import get_training_augmentation, get_validation_augmentation
 from .model import Unet
 from torchmetrics import StructuralSimilarityIndexMeasure
 from torchmetrics import PeakSignalNoiseRatio
@@ -28,21 +28,19 @@ def train(epochs, batch_size, hr_dir, tar_dir, th_dir, hr_val_dir, tar_val_dir, 
         contrastive=True,
     )
 
-    preprocessing_fn = smp.encoders.get_preprocessing_fn(encoder, encoder_weights)
-
+    # preprocessing_fn = smp.encoders.get_preprocessing_fn(encoder, encoder_weights)
+    
     train_dataset = Dataset(
         hr_dir,
         th_dir,
         tar_dir,
         augmentation=get_training_augmentation(), 
-        preprocessing=get_preprocessing(preprocessing_fn)
     )
     valid_dataset = Dataset(
         hr_val_dir,
         th_val_dir,
         tar_val_dir,
         augmentation=get_validation_augmentation(), 
-        preprocessing=get_preprocessing(preprocessing_fn)
     )
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=batch_size, shuffle=True)#, drop_last=True)

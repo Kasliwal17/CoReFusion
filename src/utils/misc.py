@@ -12,6 +12,12 @@ def unnormalize_data(data):
     data /= 2
     return data
 
+def preprocessing_fn(x):
+        x=x/255
+        x=x-0.485
+        x=x/0.229
+        return x
+
 # helper function for data visualization
 def visualize(**images):
     """PLot images in one row."""
