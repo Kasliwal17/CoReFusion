@@ -66,7 +66,7 @@ class custom_loss(base.Loss):
 #         print(x,y,z)
 #         return x
 #         return x+y/10+z/100
-        return x+p/10+y/10#+z
+        return x+p/10+y/10+z
     
 class custom_lossv(base.Loss):
     def __init__(self):
