@@ -64,7 +64,7 @@ class custom_loss(base.Loss):
         p=(1 - self.psnr(y_pr, y_gt)/40)
 #         l = self.L1(y_pr, y_gt)
 #         print(x,y,z)
-        return x +y/10+p/10 + z/10
+        return x +y/10+p/10 + z/100
         # return x+p/10+z/100+y/10  OG
     
 class custom_lossv(base.Loss):
