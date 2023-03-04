@@ -1,8 +1,8 @@
 import torch
 import os
-from utils.misc import list_img, unnormalize_data, visualize, normalize_data
-from utils.model import Unet
-from utils.transformations import get_preprocessing, get_training_augmentation
+from .utils.misc import list_img, unnormalize_data, visualize, normalize_data
+from .utils.model import Unet
+from .utils.transformations import get_preprocessing, get_training_augmentation
 import segmentation_models_pytorch as smp
 import cv2
 import matplotlib.pyplot as plt
@@ -19,11 +19,11 @@ model = Unet(
         fusion=True,
         contrastive=True,
     )
-model.load_state_dict(torch.load('/home/aditya/Documents/ThermalModels/best_model_fallen_night_165.pth',map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('./best_model_fallen_night_165.pth',map_location=torch.device('cpu')))
 
-dir1 = '/home/aditya/Documents/GitHub/ThermalSuperResolution/Dataset/train_val/validation/valid_VIS_HR'
-dir2 = '/home/aditya/Documents/GitHub/ThermalSuperResolution/Dataset/train_val/validation/valid_input_THER_LR_bicubic/X8'
-dir3 = '/home/aditya/Documents/GitHub/ThermalSuperResolution/Dataset/train_val/validation/valid_output_gt_THER_HR'
+dir1 = './Dataset/train_val/validation/valid_VIS_HR'
+dir2 = './Dataset/train_val/validation/valid_input_THER_LR_bicubic/X8'
+dir3 = './Dataset/train_val/validation/valid_output_gt_THER_HR'
 inputs1 = list_img(dir1)
 inputs2 = list_img(dir2)
 targets = list_img(dir3)
