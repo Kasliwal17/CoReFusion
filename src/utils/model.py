@@ -66,9 +66,9 @@ class SegmentationModel(torch.nn.Module):
             f2 = features1[-1]
             
             for ind in range(len(features)):
-                features[ind] = (features[ind]+features1[ind])/2
+                # features[ind] = (features[ind]+features1[ind])/2
                 # features[ind] = features1[ind]
-#                 features[ind] = torch.maximum(features[ind],features1[ind])
+                features[ind] = torch.maximum(features[ind],features1[ind])
                 # features[ind] = torch.cat((features[ind],features1[ind]),1)
     
         decoder_output = self.decoder(*features)
