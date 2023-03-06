@@ -1,5 +1,6 @@
 import argparse
 from .utils.trainer import train_model
+import wandb
 
 def main(args):
     config = {
@@ -15,7 +16,11 @@ def main(args):
         'encoder': args.encoder,
         'encoder_weights': args.encoder_weights,
         'lr': args.lr,
+        'beta': args.beta
     }
+    wandb.init(project="ThermalSuperResolutionFinal", entity="kasliwal17",
+               config={'model':'resnet34 d5','beta':args.beta, 'fusion_technique':'img 2 encoders max tanh x+beta*z+y/10+p/10 saving:ssim',
+                'lr':args.lr, 'max_ssim':0, 'max_psnr':0}, allow_val_change=True)
     train_model(config)
 
 if __name__ == '__main__':
@@ -33,5 +38,6 @@ if __name__ == '__main__':
     parser.add_argument('--encoder', type=str, required=False, default='resnet34')
     parser.add_argument('--encoder_weights', type=str, required=False, default='imagenet')
     parser.add_argument('--lr', type=float, required=False, default=1e-4)
+    parser.add_argument('--beta', type=float, required=False, default=1)
     arguments = parser.parse_args()
     main(arguments)
