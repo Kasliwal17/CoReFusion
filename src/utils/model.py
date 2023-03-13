@@ -145,7 +145,7 @@ class Unet(SegmentationModel):
 
         if contrastive:
             self.contrastive_head1= nn.Sequential(
-                                       nn.AdaptiveAvgPool2d(1),
+                                       nn.AdaptiveMaxPool2d(1),
                                        nn.Flatten(),
                                        nn.Linear(in_features=self.encoder.out_channels[-1], out_features=512),
                                        nn.BatchNorm1d(512),
@@ -154,7 +154,7 @@ class Unet(SegmentationModel):
                                        nn.BatchNorm1d(64),
                                    )
             self.contrastive_head2= nn.Sequential(
-                                       nn.AdaptiveAvgPool2d(1),
+                                       nn.AdaptiveMaxPool2d(1),
                                        nn.Flatten(),
                                        nn.Linear(in_features=self.encoder.out_channels[-1], out_features=512),
                                        nn.BatchNorm1d(512),
