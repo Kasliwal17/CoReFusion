@@ -19,7 +19,7 @@ def main(args):
         'beta': args.beta
     }
     wandb.init(project="ThermalSuperResolutionFinal", entity="kasliwal17",
-               config={'model':'resnet34 d5','beta':args.beta, 'fusion_technique':'img 2 encoders max tanh x+beta*z+y/10+p/10 saving:ssim',
+               config={'model':'resnet34 d5','beta':args.beta, 'fusion_technique':'img 2 encoders max contrast max tanh x+beta*z+y/10+p/10 saving:ssim',
                 'lr':args.lr, 'max_ssim':0, 'max_psnr':0}, allow_val_change=True)
     train_model(config)
 
