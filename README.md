@@ -2,7 +2,7 @@
 Pytorch code for our paper
 ### Contrastive Regularized Fusion for Guided Thermal Super-Resolution
 <div align="center">
-  <img width="50%" alt="CoReFusion architecture" src="media/architecture.png">
+  <img width="70%" alt="CoReFusion architecture" src="media/unet-f.png">
 </div>
  Thermal imaging has numerous advantages over regular visible-range imaging since it performs well in low-light
 circumstances. Super-Resolution approaches can broaden
@@ -17,5 +17,18 @@ data. The proposed method presents a promising solution to
 the frequently occurring problem of missing modalities in a
 real-world scenario.
 <div align="center">
-  <img width="50%" alt="Contrastive modules for regularization" src="media/modules.png">
+  <img width="50%" alt="Contrastive modules for regularization" src="media/module.png">
 </div>
+
+## Get Started
+```
+$ git clone https://github.com/Kasliwal17/ThermalSuperResolution.git
+$ cd ThermalSuperResolution
+```
+## Dependencies 
+- Pytorch 1.11.0
+- Segmentation-models-pytorch
+## Train & Eval
+```
+$ python -m src.train
+```
