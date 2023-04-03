@@ -28,6 +28,7 @@ $ cd ThermalSuperResolution
 ## Dependencies 
 - Pytorch 1.11.0
 - Segmentation-models-pytorch
+- wandb
 ## Train & Eval
 ```
 $ python -m src.train
