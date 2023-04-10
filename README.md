@@ -1,5 +1,5 @@
 # CoReFusion
-Pytorch code for our paper
+Pytorch code for our [paper](https://arxiv.org/abs/2304.01243)
 ### Contrastive Regularized Fusion for Guided Thermal Super-Resolution
 <div align="center">
   <img width="70%" alt="CoReFusion architecture" src="media/unet-f.png">
