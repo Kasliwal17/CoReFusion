@@ -185,7 +185,9 @@ class Recurrent_Unet(nn.Module):
         self.model = Unet(encoder_name, encoder_depth, encoder_weights, fusion, decoder_use_batchnorm, decoder_channels, decoder_attention_type, in_channels, classes, activation, contrastive)    
         
     def forward(self, x, y):
-        masks, _, _ = self.model(x,y)
-        masks, _, _ = self.model(x,masks)
-        masks, f1, f2 = self.model(x,masks)
-        return masks, f1, f2
+        mask, _, _ = self.model(x,y)
+        mask = torch.cat([mask,mask,mask],dim=1)
+        mask, _, _ = self.model(x,mask)
+        mask = torch.cat([mask,mask,mask],dim=1)
+        mask, f1, f2 = self.model(x,mask)
+        return mask, f1, f2
