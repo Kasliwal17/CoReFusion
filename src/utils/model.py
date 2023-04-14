@@ -181,6 +181,7 @@ class Recurrent_Unet(nn.Module):
         activation: Optional[Union[str, callable]] = None,
         contrastive: bool = False,
     ):
+        super().__init__()
         self.model = Unet(encoder_name, encoder_depth, encoder_weights, fusion, decoder_use_batchnorm, decoder_channels, decoder_attention_type, in_channels, classes, activation, contrastive)    
         
     def forward(self, x, y):
