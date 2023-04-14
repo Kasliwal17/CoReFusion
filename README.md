@@ -33,3 +33,15 @@ $ cd ThermalSuperResolution
 ```
 $ python -m src.train
 ```
+## Citation
+
+If you find this method and/or code useful, please consider citing
+
+```bibtex
+@article{kasliwal2023corefusion,
+  title={CoReFusion: Contrastive Regularized Fusion for Guided Thermal Super-Resolution},
+  author={Kasliwal, Aditya and Seth, Pratinav and Rallabandi, Sriya and Singhal, Sanchit},
+  journal={arXiv preprint arXiv:2304.01243},
+  year={2023}
+}
+```
