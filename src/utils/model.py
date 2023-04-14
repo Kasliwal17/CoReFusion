@@ -165,3 +165,26 @@ class Unet(SegmentationModel):
 
         self.name = "u-{}".format(encoder_name)
         self.initialize()
+
+class Recurrent_Unet(nn.module):
+    def __init__(
+        self,
+        encoder_name: str = "resnet34",
+        encoder_depth: int = 5,
+        encoder_weights: Optional[str] = "imagenet",
+        fusion:bool=True,
+        decoder_use_batchnorm: bool = True,
+        decoder_channels: List[int] = (256, 128, 64, 32, 16),
+        decoder_attention_type: Optional[str] = None,
+        in_channels: int = 3,
+        classes: int = 1,
+        activation: Optional[Union[str, callable]] = None,
+        contrastive: bool = False,
+    ):
+        self.model = Unet(encoder_name, encoder_depth, encoder_weights, fusion, decoder_use_batchnorm, decoder_channels, decoder_attention_type, in_channels, classes, activation, contrastive)    
+        
+    def forward(self, x, y):
+        masks, _, _ = self.model(x,y)
+        masks, _, _ = self.model(x,masks)
+        masks, f1, f2 = self.model(x,masks)
+        return masks, f1, f2
