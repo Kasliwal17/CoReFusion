@@ -166,7 +166,7 @@ class Unet(SegmentationModel):
         self.name = "u-{}".format(encoder_name)
         self.initialize()
 
-class Recurrent_Unet(nn.module):
+class Recurrent_Unet(nn.Module):
     def __init__(
         self,
         encoder_name: str = "resnet34",
