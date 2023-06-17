@@ -1,5 +1,5 @@
 # CoReFusion
-Pytorch code for our [paper](https://arxiv.org/abs/2304.01243)
+Pytorch code for our [paper](https://openaccess.thecvf.com/content/CVPR2023W/PBVS/html/Kasliwal_CoReFusion_Contrastive_Regularized_Fusion_for_Guided_Thermal_Super-Resolution_CVPRW_2023_paper.html)
 ### Contrastive Regularized Fusion for Guided Thermal Super-Resolution
 <div align="center">
   <img width="70%" alt="CoReFusion architecture" src="media/unet-f.png">
@@ -38,10 +38,12 @@ $ python -m src.train
 If you find this method and/or code useful, please consider citing
 
 ```bibtex
-@article{kasliwal2023corefusion,
-  title={CoReFusion: Contrastive Regularized Fusion for Guided Thermal Super-Resolution},
-  author={Kasliwal, Aditya and Seth, Pratinav and Rallabandi, Sriya and Singhal, Sanchit},
-  journal={arXiv preprint arXiv:2304.01243},
-  year={2023}
+@InProceedings{Kasliwal_2023_CVPR,
+    author    = {Kasliwal, Aditya and Seth, Pratinav and Rallabandi, Sriya and Singhal, Sanchit},
+    title     = {CoReFusion: Contrastive Regularized Fusion for Guided Thermal Super-Resolution},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) Workshops},
+    month     = {June},
+    year      = {2023},
+    pages     = {507-514}
 }
 ```
